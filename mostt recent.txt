@@ -1,0 +1,148 @@
+// Abstract Employee class
+public abstract class Employee {
+    private String name;
+    private String employeeId;
+    private double baseSalary;
+    private int attendance; // Attendance in percentage (0-100)
+
+    public Employee(String name, String employeeId, double baseSalary, int attendance) {
+        this.name = name;
+        this.employeeId = employeeId;
+        this.baseSalary = baseSalary;
+        this.attendance = attendance;
+    }
+
+    // Getters and Setters
+    public String getName() {
+        return name;
+    }
+
+    public String getEmployeeId() {
+        return employeeId;
+    }
+
+    public double getBaseSalary() {
+        return baseSalary;
+    }
+
+    public void setBaseSalary(double baseSalary) {
+        this.baseSalary = baseSalary;
+    }
+
+    public int getAttendance() {
+        return attendance;
+    }
+
+    public void setAttendance(int attendance) {
+        this.attendance = attendance;
+    }
+
+    // Abstract method to calculate net salary (must be implemented by subclasses)
+    public abstract double calculateNetSalary();
+
+    // Abstract method to calculate bonus
+    public abstract double calculateBonus();
+
+    // Abstract method to calculate deductions
+    public abstract double calculateDeductions();
+}
+
+// FullTimeEmployee class
+public class FullTimeEmployee extends Employee {
+    private static final double TAX_RATE = 0.2;
+    private static final double BONUS_RATE = 0.1; // 10% of base salary as bonus if attendance > 90%
+    private static final double DEDUCTION_RATE = 0.05; // 5% deduction if attendance < 80%
+
+    public FullTimeEmployee(String name, String employeeId, double baseSalary, int attendance) {
+        super(name, employeeId, baseSalary, attendance);
+    }
+
+    @Override
+    public double calculateBonus() {
+        if (getAttendance() > 90) {
+            return getBaseSalary() * BONUS_RATE;
+        }
+        return 0;
+    }
+
+    @Override
+    public double calculateDeductions() {
+        if (getAttendance() < 80) {
+            return getBaseSalary() * DEDUCTION_RATE;
+        }
+        return 0;
+    }
+
+    @Override
+    public double calculateNetSalary() {
+        double grossSalary = getBaseSalary() + calculateBonus();
+        return grossSalary - (grossSalary * TAX_RATE) - calculateDeductions();
+    }
+}
+
+// PartTimeEmployee class
+public class PartTimeEmployee extends Employee {
+    private static final double TAX_RATE = 0.1;
+    private static final double BONUS_RATE = 0.05; // 5% of base salary as bonus if attendance > 90%
+    private static final double DEDUCTION_RATE = 0.03; // 3% deduction if attendance < 80%
+
+    public PartTimeEmployee(String name, String employeeId, double baseSalary, int attendance) {
+        super(name, employeeId, baseSalary, attendance);
+    }
+
+    @Override
+    public double calculateBonus() {
+        if (getAttendance() > 90) {
+            return getBaseSalary() * BONUS_RATE;
+        }
+        return 0;
+    }
+
+    @Override
+    public double calculateDeductions() {
+        if (getAttendance() < 80) {
+            return getBaseSalary() * DEDUCTION_RATE;
+        }
+        return 0;
+    }
+
+    @Override
+    public double calculateNetSalary() {
+        double grossSalary = getBaseSalary() + calculateBonus();
+        return grossSalary - (grossSalary * TAX_RATE) - calculateDeductions();
+    }
+}
+
+// PayrollService class to manage salary processing
+public class PayrollService {
+
+    public void processPayroll(Employee employee) {
+        System.out.println("Processing payroll for: " + employee.getName());
+        System.out.println("Employee ID: " + employee.getEmployeeId());
+        System.out.println("Base Salary: " + employee.getBaseSalary());
+        System.out.println("Attendance: " + employee.getAttendance() + "%");
+        System.out.println("Bonus: " + employee.calculateBonus());
+        System.out.println("Deductions: " + employee.calculateDeductions());
+        System.out.println("Net Salary: " + employee.calculateNetSalary());
+    }
+}
+
+// Main class to run the payroll system
+public class PayrollSystem {
+    public static void main(String[] args) {
+        // Create Full-time and Part-time Employees
+        Employee fullTimeEmployee = new FullTimeEmployee("John Doe", "FT123", 50000, 95);
+        Employee partTimeEmployee = new PartTimeEmployee("Jane Smith", "PT456", 20000, 85);
+
+        // Create PayrollService
+        PayrollService payrollService = new PayrollService();
+
+        // Process Payroll for Full-Time Employee
+        payrollService.processPayroll(fullTimeEmployee);
+
+        System.out.println(); // Adding a line break
+
+        // Process Payroll for Part-Time Employee
+        payrollService.processPayroll(partTimeEmployee);
+    }
+}
